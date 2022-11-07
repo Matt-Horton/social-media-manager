@@ -2,38 +2,44 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import {
-    createBrowserRouter,
-    RouterProvider,
-    createRoutesFromElements,
-    Route,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Root from "./routes/Root";
 import ErrorPage from "./routes/ErrorPage";
 import SignIn from "./routes/SignIn";
 import SignUp from "./routes/SignUp";
 import { AuthContextProvider } from "./context/AuthContext";
-import Dashboard from "./routes/Dashboard";
-
-const router = createBrowserRouter(
-    createRoutesFromElements(
-        <>
-            <Route path="/" element={<Root />} errorElement={<ErrorPage />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-        </>
-    )
-);
+import { RequireAuth } from "./routes/RequireAuth";
+import DashboardLayout from "./components/DashboardLayout";
+import Posts from "./routes/Posts";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 root.render(
     <React.StrictMode>
-        <AuthContextProvider>
-            <RouterProvider router={router} />
-        </AuthContextProvider>
+        <BrowserRouter>
+            <AuthContextProvider>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={<Root />}
+                        errorElement={<ErrorPage />}
+                    />
+                    <Route path="signup" element={<SignUp />} />
+                    <Route path="signin" element={<SignIn />} />
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <RequireAuth>
+                                <DashboardLayout />
+                            </RequireAuth>
+                        }
+                    >
+                        <Route path="posts" element={<Posts />} />
+                    </Route>
+                </Routes>
+            </AuthContextProvider>
+        </BrowserRouter>
     </React.StrictMode>
 );
 

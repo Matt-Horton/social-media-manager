@@ -1,11 +1,13 @@
 type InputProps = {
     id: string;
+    name: string;
     value: string;
     onChange: (value: string) => void;
     placeholder: string;
 };
 export default function Input({
     id,
+    name,
     value,
     onChange,
     placeholder,
@@ -17,6 +19,7 @@ export default function Input({
     return (
         <input
             id={id}
+            name={name}
             placeholder={placeholder}
             value={value}
             onChange={handleChange}

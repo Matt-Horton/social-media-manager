@@ -1,3 +1,9 @@
+import { Link } from "react-router-dom";
+
 export default function Dashboard() {
-    return <div>Dashboard</div>;
+    return (
+        <div>
+            <Link to={"/"}>Press me</Link>
+        </div>
+    );
 }

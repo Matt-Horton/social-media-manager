@@ -1,11 +1,20 @@
 import { useState } from "react";
-import { Form, Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import Input from "../components/Input";
 import InputLabel from "../components/InputLabel";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function SignUp() {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const { currentUser } = useAuthContext();
+    const location = useLocation();
+
+    let from = location.state?.from?.pathname || "/dashboard";
+
+    if (currentUser.id) {
+        return <Navigate to={from} state={{ from: location }} replace />;
+    }
 
     return (
         <div className=" bg-slate-100 h-screen w-full flex justify-center items-center">
@@ -15,10 +24,11 @@ export default function SignUp() {
                     <h3 className="text-4xl font-bold text-indigo-500">
                         Sign Up
                     </h3>
-                    <Form method="post" className="flex flex-col mt-4 w-3/4">
+                    <form method="post" className="flex flex-col mt-4 w-3/4">
                         <InputLabel htmlFor="username" text="Username" />
                         <Input
                             id="username"
+                            name="username"
                             value={username}
                             onChange={setUsername}
                             placeholder="bob@gmail.com"
@@ -26,6 +36,7 @@ export default function SignUp() {
                         <InputLabel htmlFor="password" text="Password" />
                         <Input
                             id="password"
+                            name="password"
                             value={password}
                             onChange={setPassword}
                             placeholder="Password123"
@@ -48,7 +59,7 @@ export default function SignUp() {
                                 </Link>
                             </span>
                         </p>
-                    </Form>
+                    </form>
                 </div>
             </div>
         </div>
