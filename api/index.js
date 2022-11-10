@@ -4,7 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = process.env.PORT | 3001;
-const authRoutes = require("./auth/routes");
+// const authRoutes = require("./auth/routes");
 
 // Middleware
 app.use(bodyParser.json());
@@ -24,7 +24,7 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
+// app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello there");
