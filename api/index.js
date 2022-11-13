@@ -3,7 +3,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
-const PORT = process.env.PORT | 3001;
+const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST;
 // const authRoutes = require("./auth/routes");
 
 // Middleware
@@ -37,5 +38,6 @@ app.post("/users", (req, res) => {
 });
 
 app.listen(PORT, () => {
+  console.log(`Listening on host: ${HOST}`);
   console.log(`Listening on port: ${PORT}`);
 });
