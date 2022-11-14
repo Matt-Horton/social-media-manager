@@ -3,97 +3,97 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const signUp = async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
 
-    const USERNAME_EXISTS_QUERY = "SELECT FROM users WHERE username = $1";
+  const USERNAME_EXISTS_QUERY = "SELECT FROM users WHERE email = $1";
 
-    db.query(USERNAME_EXISTS_QUERY, [username], (error, data) => {
-        if (error) res.status(500).json(error);
+  db.query(USERNAME_EXISTS_QUERY, [username], (error, data) => {
+    if (error) res.status(500).json(error);
 
-        if (data.length > 0) {
-            return res.status(409).json({
-                message: "A user with that username already exists",
-            });
-        }
-    });
+    if (data.rows.length > 0) {
+      return res.status(409).json({
+        message: "A user with that username already exists",
+      });
+    }
+  });
 
-    // generate salt to hash password
-    const salt = await bcrypt.genSalt(10);
-    // now we set user password to hashed password
-    const hashedPassword = await bcrypt.hash(password, salt);
+  // generate salt to hash password
+  const salt = await bcrypt.genSalt(10);
+  // now we set user password to hashed password
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-    const CREATE_NEW_USER_QUERY =
-        "INSERT INTO users(username, password) VALUES($1, $2) RETURNING *";
+  const CREATE_NEW_USER_QUERY =
+    "INSERT INTO users(email, password) VALUES($1, $2) RETURNING *";
 
-    db.query(
-        CREATE_NEW_USER_QUERY,
-        [username, hashedPassword],
-        (error, data) => {
-            if (error) return res.status(500).json(error);
+  db.query(
+    CREATE_NEW_USER_QUERY,
+    [username, hashedPassword],
+    (error, data) => {
+      if (error) return res.status(500).json(error);
 
-            return res.status(201).json(data);
-        }
-    );
+      return res.status(201).json(data.rows[0]);
+    }
+  );
 };
 
 const signIn = async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
 
-    console.log("Username: ", username);
-    console.log("Password: ", password);
+  console.log("Username: ", username);
+  console.log("Password: ", password);
 
-    const GET_USER_BY_USERNAME_QUERY =
-        "SELECT * FROM users WHERE username = $1";
-    db.query(GET_USER_BY_USERNAME_QUERY, [username], async (error, data) => {
-        if (error) return res.status(500).json(data);
+  const GET_USER_BY_USERNAME_QUERY =
+    "SELECT * FROM users WHERE email = $1";
+  db.query(GET_USER_BY_USERNAME_QUERY, [username], async (error, data) => {
+    if (error) return res.status(500).json(data);
 
-        if (data.rows.length === 0) {
-            console.log("Username doesnt exist");
-            return res.status(404).json({
-                message: "A user with that username doesn't exist",
-            });
-        }
+    if (data.rows.length === 0) {
+      console.log("Username doesn't exist");
+      return res.status(404).json({
+        message: "A user with that username doesn't exist",
+      });
+    }
 
-        const validPassword = await bcrypt.compare(
-            password,
-            data.rows[0].password
-        );
+    const validPassword = await bcrypt.compare(
+      password,
+      data.rows[0].password
+    );
 
-        if (!validPassword)
-            return res.status(400).json({ error: "Invalid Password" });
+    if (!validPassword)
+      return res.status(400).json({ error: "Invalid Password" });
 
-        const token = jwt.sign({ id: data.rows[0].id }, "secretkey", {
-            expiresIn: "1800s",
-        });
-
-        const { id, username } = data.rows[0];
-
-        res.cookie("accessToken", token, {
-            httpOnly: true,
-        })
-            .status(200)
-            .json({
-                id: id,
-                username: username,
-            });
+    const token = jwt.sign({ id: data.rows[0].id }, "secretkey", {
+      expiresIn: "1800s",
     });
+
+    const { id, username } = data.rows[0];
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+    })
+      .status(200)
+      .json({
+        id: id,
+        username: username,
+      });
+  });
 };
 
 const logout = (req, res) => {
-    res.clearCookie("accessToken", {
-        secure: true,
-        sameSite: "none",
-    })
-        .status(200)
-        .json({
-            message: "User has been logged out",
-        });
+  res.clearCookie("accessToken", {
+    secure: true,
+    sameSite: "none",
+  })
+    .status(200)
+    .json({
+      message: "User has been logged out",
+    });
 };
 
 module.exports = {
-    signUp,
-    signIn,
-    logout,
+  signUp,
+  signIn,
+  logout,
 };

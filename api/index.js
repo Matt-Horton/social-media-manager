@@ -7,6 +7,8 @@ const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST;
 const authRoutes = require("./auth/routes");
 
+require('dotenv').config();
+
 // Middleware
 app.use(bodyParser.json());
 app.use((req, res, next) => {
