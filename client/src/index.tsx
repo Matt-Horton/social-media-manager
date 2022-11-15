@@ -11,36 +11,34 @@ import { AuthContextProvider } from "./context/AuthContext";
 import { RequireAuth } from "./routes/RequireAuth";
 import DashboardLayout from "./components/DashboardLayout";
 import Posts from "./routes/Posts";
+import Accounts from "./routes/Accounts";
 
 const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <AuthContextProvider>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<Root />}
-                        errorElement={<ErrorPage />}
-                    />
-                    <Route path="signup" element={<SignUp />} />
-                    <Route path="signin" element={<SignIn />} />
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <RequireAuth>
-                                <DashboardLayout />
-                            </RequireAuth>
-                        }
-                    >
-                        <Route path="posts" element={<Posts />} />
-                    </Route>
-                </Routes>
-            </AuthContextProvider>
-        </BrowserRouter>
-    </React.StrictMode>
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthContextProvider>
+        <Routes>
+          <Route path="/" element={<Root />} errorElement={<ErrorPage />} />
+          <Route path="signup" element={<SignUp />} />
+          <Route path="signin" element={<SignIn />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <DashboardLayout />
+              </RequireAuth>
+            }
+          >
+            <Route path="posts" element={<Posts />} />
+            <Route path="accounts" element={<Accounts />} />
+          </Route>
+        </Routes>
+      </AuthContextProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
