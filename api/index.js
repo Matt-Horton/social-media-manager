@@ -6,6 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST;
 const authRoutes = require("./auth/routes");
+const { verifyJWT } = require("./middleware/verifyJWT");
 
 require('dotenv').config();
 
@@ -31,6 +32,14 @@ app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello there");
+});
+
+app.get('/public', (req, res) => {
+  res.send('Open to the public');
+});
+
+app.get('/private', verifyJWT, (req, res) => {
+  res.send('You should only see this if you\'re logged in');
 });
 
 app.post("/users", (req, res) => {

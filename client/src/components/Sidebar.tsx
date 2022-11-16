@@ -26,7 +26,7 @@ export default function Sidebar() {
           <SidebarLink text="Stats" to="/dashboard/stats" />
         </div>
         <div>
-          <SidebarLink text="Accounts" to="/accounts" />
+          <SidebarLink text="Accounts" to="/dashboard/accounts" />
         </div>
       </nav>
     </div>
